@@ -40,6 +40,7 @@ typedef union {
 #define NJD_EVAL_UNIT_SCL 0x4
 #define NJD_EVAL_BREAK 0x10
 
+// Used to prevent the compiler from generating .rodata for floats
 #define FLOAT(val) (*(volatile float *)&(unsigned int){ ((union { float f; unsigned int u; }){ (val) }).u })
 
 void DrawCollision() {
@@ -49,6 +50,7 @@ void DrawCollision() {
     //static short collisionPolyPlist[8] = { NJD_CS, (short)0x0005,
     //    (short)0x0001, (short)0x0003, (short)0x0000,
     //    (short)0x0001, (short)0x0002, (short)0x00ff};
+    // Have to do it this way to avoid generating .rodata
     unsigned short collisionPolyPlist[8];
     collisionPolyPlist[0] = NJD_CS;
     collisionPolyPlist[1] = 0x0005;

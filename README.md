@@ -1,0 +1,3 @@
+- I built this by having the devkitpro powerpc stuff installed in a pre-existing msys instance
+- The `bin_to_gecko06.sh` script isn't perfect: I need to make it properly account for the final line potentially not being a multiple of 8
+- idk ping me if you have questions or something
