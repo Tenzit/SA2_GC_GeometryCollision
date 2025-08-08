@@ -1,0 +1,21 @@
+{
+  "configurations": [
+    {
+      "name": "devkitPPC",
+      "includePath": [
+        "${workspaceFolder}/**",
+        "C:/msys64/opt/devkitpro/libogc/include",
+        "C:/msys64/opt/devkitpro/devkitPPC/lib/gcc/powerpc-eabi/*/include"
+      ],
+      "defines": [
+        "__POWERPC__",
+        "__DEVKITPPC__"
+      ],
+      "compilerPath": "C:/msys64/opt/devkitpro/devkitPPC/bin/powerpc-eabi-gcc",
+      "cStandard": "c99",
+      "cppStandard": "c++17",
+      "intelliSenseMode": "gcc-x64"
+    }
+  ],
+  "version": 4
+}

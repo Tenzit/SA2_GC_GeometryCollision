@@ -1,0 +1,107 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Make Build Dir",
+      "type": "shell",
+      "command": "mkdir -p build",
+      "problemMatcher": []
+    }, 
+    {
+      "label": "Compile to .o",
+      "type": "shell",
+      "command": "powerpc-eabi-gcc",
+      "args": [
+        "-Os",
+        "-nostdlib",
+        "-ffreestanding",
+        "-fdata-sections",
+        "-ffunction-sections",
+        "-fno-asynchronous-unwind-tables",
+        "-fpack-struct",
+        "-fsingle-precision-constant",
+        "-Wl,--gc-sections",
+        "-Wa,-mgekko",
+        "-mregnames",
+        "-mbig",
+        "-fno-pic",
+        "-c",
+        "${file}",
+        "-o",
+        "build/${fileBasenameNoExtension}.o"
+      ],
+      "options": {
+        "cwd": "${fileDirname}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Objcopy .o to .bin",
+      "type": "shell",
+      "command": "powerpc-eabi-objcopy",
+      "args": [
+        "-O",
+        "binary",
+        "build/${fileBasenameNoExtension}.o",
+        "build/${fileBasenameNoExtension}.bin"
+      ],
+      "options": {
+        "cwd": "${fileDirname}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Make Gecko Code",
+      "type": "shell",
+      "command": "./bin_to_gecko06.sh",
+      "args": [
+        "build/${fileBasenameNoExtension}.bin",
+        "81700000",
+        "build/${fileBasenameNoExtension}.gecko.txt"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "Build PowerPC file .bin",
+      "dependsOn": [
+        "Make Build Dir",
+        "Compile to .o",
+        "Objcopy .o to .bin",
+        "Make Gecko Code"
+      ],
+      "dependsOrder": "sequence",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+    },
+    {
+        "label": "Clean Build Directory",
+        "type": "shell",
+        "command": "bash",
+        "args": [
+            "-c",
+            "rm -rf build/*"
+        ],
+        "options": {
+            "cwd": "${workspaceFolder}"
+        },
+        "group": {
+            "kind": "build",
+            "isDefault": false
+        },
+        "problemMatcher": []
+    },
+    {
+      "label": "Clean Current File Build",
+      "type": "shell",
+      "command": "rm -rf build/${fileBasenameNoExtension}.*",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    }
+  ]
+}
