@@ -44,6 +44,22 @@ typedef union {
 #define FLOAT(val) (*(volatile float *)&(unsigned int){ ((union { float f; unsigned int u; }){ (val) }).u })
 
 void DrawCollision() {
+
+    // r31 *should* be the register that's holding a pointer to csts
+    // Can compare with player 0's csts
+
+    void *csts;
+    __asm__ volatile ("mr %0, %%r31" : "=r" (csts));
+
+    void *playerPhys = *(void **)0x801e7728;
+    if (playerPhys == 0) {
+        return;
+    }
+    void *playerCsts = *(void **)((__UINTPTR_TYPE__)playerPhys + 0x90);
+    if (playerCsts != csts) {
+        return;
+    }
+
     typedef void (*DrawChunkModelFunc)(NJS_OBJECT *obj);
     DrawChunkModelFunc DrawChunkModel = (DrawChunkModelFunc)0x8011e17c;
 
