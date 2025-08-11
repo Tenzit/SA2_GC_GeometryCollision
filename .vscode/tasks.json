@@ -13,22 +13,31 @@
       "command": "powerpc-eabi-gcc",
       "args": [
         "-Os",
+        "-v",
         "-nostdlib",
         "-ffreestanding",
         "-fdata-sections",
         "-ffunction-sections",
+        "-fno-unroll-loops",
+        "-fno-builtin",
         "-fno-asynchronous-unwind-tables",
         "-fpack-struct",
         "-fsingle-precision-constant",
-        "-Wl,--gc-sections",
-        "-Wa,-mgekko",
+        //"-Wl,--gc-sections",
+        "-Wl,-Ttext=81701000",
+        "-Wa,-mgekko,-mregnames",
         "-mregnames",
         "-mbig",
         "-fno-pic",
-        "-c",
+        "-save-temps",
+        "-ffixed-r27",
+        "-ffixed-r28",
+        "-ffixed-r29",
+        "-ffixed-r30",
+        "-ffixed-r31",
         "${file}",
         "-o",
-        "build/${fileBasenameNoExtension}.o"
+        "build/${fileBasenameNoExtension}.elf",
       ],
       "options": {
         "cwd": "${fileDirname}"
@@ -42,7 +51,7 @@
       "args": [
         "-O",
         "binary",
-        "build/${fileBasenameNoExtension}.o",
+        "build/${fileBasenameNoExtension}.elf",
         "build/${fileBasenameNoExtension}.bin"
       ],
       "options": {
@@ -56,7 +65,7 @@
       "command": "./bin_to_gecko06.sh",
       "args": [
         "build/${fileBasenameNoExtension}.bin",
-        "81700000",
+        "81701000",
         "build/${fileBasenameNoExtension}.gecko.txt"
       ],
       "options": {
