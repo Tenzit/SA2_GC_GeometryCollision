@@ -34,10 +34,25 @@ FILESIZE=$(( FILESIZE + PAD ))
 OFFSET=0
 CHUNK=$(( FILESIZE ))
 
+PATCHFILE="$OUTFILE.patch"
+PATCHBASE=$BASE_ADDR
+
 true > "$OUTFILE"
+true > "$PATCHFILE"
 while [[ $((FILESIZE)) -ge $((CHUNK)) ]] && [[ $((FILESIZE)) -gt 0 ]]; do
     printf "%08X %08X\n" "$(( 16#06000000 + ADDR_MASKED + OFFSET ))" "$((CHUNK))" >> "$OUTFILE"
     hexdump -v -e '4/1 "%02X" " " 4/1 "%02X" "\n"' -n $((CHUNK)) -s $OFFSET "$BINFILE" >> "$OUTFILE"
+    PATCHBASE=$(hexdump -v -e '"0x" 4/1 "%02X" "\n"' -n $((CHUNK)) -s $OFFSET "$BINFILE" | awk -v base="$PATCHBASE" -v file="$PATCHFILE" '
+    BEGIN {
+        base = strtonum(base);
+    }
+    {
+        printf "0x%08X:dword:%s\n", base, $0 >> file;
+        base +=4;
+    }
+    END {
+        print base;
+    }')
     ((FILESIZE-=CHUNK))
     ((OFFSET+=CHUNK))
 done
@@ -45,6 +60,17 @@ done
 if [[ $((FILESIZE)) -gt 0 ]]; then 
     printf "%08X %08X\n" "$(( 16#06000000 + ADDR_MASKED + OFFSET ))" "$((FILESIZE))" >> "$OUTFILE"
     hexdump -v -e '4/1 "%02X" " " 4/1 "%02X" "\n"' -s $OFFSET "$BINFILE" >> "$OUTFILE"
+    PATCHBASE=$(hexdump -v -e '"0x" 4/1 "%02X" "\n"' -n $((CHUNK)) -s $OFFSET "$BINFILE" | awk -v base="$PATCHBASE" -v file="$PATCHFILE" '
+    BEGIN {
+        base = strtonum(base);
+    }
+    {
+        printf "0x%08X:dword:%s\n", base, $0 >> file;
+        base +=4;
+    }
+    END {
+        print base;
+    }')
 fi
 
 #SRC_ADDR=800cf698
@@ -64,4 +90,4 @@ FLAG_HEX=$((16#$FLAG_ADDR))
 # shellcheck disable=SC2034
 FLAG_MASKED=$(( FLAG_HEX & 0x0fffffff ))
 
-#printf "%08X %08X\n" "$FLAG_MASKED" "1" >> $OUTFILE
+#printf "%08X %08X\n" "$FLAG_MASKED" "1" >> "$OUTFILE"
