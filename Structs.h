@@ -57,7 +57,7 @@ typedef struct {
     Rotation rotation;
     NJS_VECTOR position;
     NJS_VECTOR scale;
-    void *collision_data;
+    struct CollisionData *collision_data;
 } __attribute__((packed)) taskwk;
 
 typedef struct task {
@@ -78,5 +78,17 @@ typedef struct task {
     char *nameAgain;
     void *unknown;
 } __attribute__((packed)) task;
+
+typedef struct CollisionData {
+    unsigned char id;
+    unsigned char unused0x1[7];
+    float maxDistThreshold;
+    CollisionElement *collisionArray;
+    unsigned int unused0x10[32];
+    NJS_POINT3 normal;
+    task *collisionOwner;
+    unsigned int unused0xa0;
+    struct CollisionData *hitObject;
+} __attribute__((packed)) CollisionData;
 
 #endif // STRUCTS_H
