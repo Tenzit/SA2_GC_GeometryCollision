@@ -99,7 +99,9 @@ static void DrawHitbox(task *drawTask, CollisionElement *drawHitbox, task *colli
     if ((drawHitbox->flags & 0x80000000) != 0) {
         return;
     }
-
+    if (drawHitbox->type > PUSHWALL) {
+        return;
+    }
     njSaveControl3D();
     njControl3D(NJD_CONTROL_3D_CONSTANT_MATERIAL);
     njControl3D_unset(NJD_CONTROL_3D_CONSTANT_TEXTURE_MATERIAL);
